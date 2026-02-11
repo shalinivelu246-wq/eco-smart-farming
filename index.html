@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eco Smart Farming Dashboard</title>
+
+<!-- Modern CSS -->
+<style>
+    body {
+        margin: 0;
+        font-family: 'Segoe UI', sans-serif;
+        background: linear-gradient(135deg, #1e3c72, #2a5298);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        color: white;
+    }
+
+    .container {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(15px);
+        padding: 30px;
+        border-radius: 20px;
+        width: 400px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        text-align: center;
+    }
+
+    h1 {
+        margin-bottom: 20px;
+        font-size: 24px;
+        letter-spacing: 1px;
+    }
+
+    .card {
+        background: rgba(255,255,255,0.15);
+        padding: 15px;
+        border-radius: 15px;
+        margin: 10px 0;
+        font-size: 18px;
+        transition: 0.3s;
+    }
+
+    .card:hover {
+        transform: scale(1.05);
+        background: rgba(255,255,255,0.25);
+    }
+
+    .status-on {
+        color: #00ff88;
+        font-weight: bold;
+    }
+
+    .status-off {
+        color: #ff4d4d;
+        font-weight: bold;
+    }
+
+    footer {
+        margin-top: 15px;
+        font-size: 12px;
+        opacity: 0.8;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🌱 Eco Smart Farming</h1>
+
+    <div class="card">🌡 Temperature: <span id="temp">--</span> °C</div>
+    <div class="card">💧 Humidity: <span id="humidity">--</span> %</div>
+    <div class="card">🌱 Soil Moisture: <span id="soil">--</span></div>
+    <div class="card">💡 Light Level: <span id="light">--</span></div>
+    <div class="card">🚿 Pump Status: <span id="pump">--</span></div>
+
+    <footer>IoT Based Eco-Smart Farming System</footer>
+</div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"></script>
+
+<script type="module">
+
+// 🔹 Your Firebase Configuration
+const firebaseConfig = {
+apiKey: "AIzaSyCViGIrvlP15tknzPn8gjT7eqhrau6zq5w",
+  authDomain: "eco-smart-farming.firebaseapp.com",
+  databaseURL: "https://eco-smart-farming-default-rtdb.firebaseio.com",
+  projectId: "eco-smart-farming",
+  storageBucket: "eco-smart-farming.firebasestorage.app",
+  messagingSenderId: "938953486646",
+  appId: "1:938953486646:web:4979f69d49c96cf459c397",
+  measurementId: "G-K61DG45EJJ"
+
+};
+
+// Initialize Firebase
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
+
+// References
+const tempRef = ref(database, "/sensor_data/temperature");
+const humidityRef = ref(database, "/sensor_data/humidity");
+const soilRef = ref(database, "/sensor_data/soil");
+const lightRef = ref(database, "/sensor_data/light");
+const pumpRef = ref(database, "/pump_status");
+
+// Real-time updates
+onValue(tempRef, (snapshot) => {
+    document.getElementById("temp").innerText = snapshot.val();
+});
+
+onValue(humidityRef, (snapshot) => {
+    document.getElementById("humidity").innerText = snapshot.val();
+});
+
+onValue(soilRef, (snapshot) => {
+    document.getElementById("soil").innerText = snapshot.val();
+});
+
+onValue(lightRef, (snapshot) => {
+    document.getElementById("light").innerText = snapshot.val();
+});
+
+onValue(pumpRef, (snapshot) => {
+    let pumpStatus = snapshot.val();
+    let pumpElement = document.getElementById("pump");
+    pumpElement.innerText = pumpStatus;
+
+    if (pumpStatus === "ON") {
+        pumpElement.className = "status-on";
+    } else {
+        pumpElement.className = "status-off";
+    }
+});
+
+</script>
+
+</body>
+</html>
